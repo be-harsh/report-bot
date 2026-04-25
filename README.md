@@ -1,56 +1,131 @@
 # Report Bot
 
-This project reads sales data from a CSV file, analyzes it, and sends a daily summary to Telegram. It is designed to be simple for local use and can also be triggered by Windows Task Scheduler for automatic delivery.
+This project reads sales data from a CSV file, checks the numbers, and sends a daily report to Telegram. Each file has one small job, so the code is easier to read and change.
 
-## Install
+## What It Does
+
+- Reads sales data from a CSV file
+- Calculates total revenue, top product, total orders, and average order value
+- Builds a simple Telegram message
+- Sends the message to Telegram
+
+## Project Structure
+
+```
+report_bot/
+├── data/
+│   └── sales.csv          # Your sales data goes here
+├── src/
+│   ├── models.py          # Data blueprints (SaleRecord, ReportSummary)
+│   ├── reader.py          # Reads CSV into SaleRecord objects
+│   ├── analyzer.py        # Calculates totals and summaries
+│   ├── formatter.py       # Formats the report message
+│   ├── bot.py             # Sends message via Telegram API
+│   └── scheduler.py       # Runs the pipeline on a daily schedule
+├── config.py              # File paths and schedule settings
+├── main.py                # Entry point
+├── .env                   # Your secrets (never pushed to GitHub)
+└── requirements.txt       # Dependencies
+```
+
+---
+
+## Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/be-harsh/report-bot.git
+cd report-bot
+```
+
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Set Up `.env`
+### 3. Create your `.env` file
 
-Create a `.env` file in the project root with:
+Create a file named `.env` in the project root and add:
 
-```env
+```
 BOT_TOKEN=your_telegram_bot_token
 CHAT_ID=your_telegram_chat_id
 ```
 
-## Run
+To get these values:
+- **BOT_TOKEN** — Open Telegram, search `@BotFather`, send `/newbot`, follow the steps
+- **CHAT_ID** — Search `@userinfobot` on Telegram, send any message, copy the ID it gives you
 
-Run the project manually with:
+### 4. Add your sales data
+
+Your `data/sales.csv` file should look like this:
+
+```
+date,product,quantity,price
+2024-01-01,Notebook,5,120
+2024-01-01,Pen,20,15
+2024-01-02,Stapler,2,250
+```
+
+### 5. Set the schedule time
+
+Open `config.py` and set the time you want:
+
+```python
+SCHEDULE_TIME = "09:00"
+```
+
+## Run
 
 ```bash
 python main.py
 ```
 
-If you want to use the old in-process Python scheduler, run:
+This sends the report one time and then the program stops.
+
+If you want to keep the Python scheduler running in the terminal, use:
 
 ```bash
 python main.py --loop
 ```
 
-## Windows Scheduled Run
+## Sample Telegram Report
 
-To run automatically without keeping Python open all day, create a Windows Task Scheduler task that runs:
+![Telegram report message](screenshot_report_bot.png)
 
-```bash
-python e:\DEVELOPING\projects\report_bot\main.py
-```
+## Run Automatically on Windows
 
-Recommended Task Scheduler settings:
+If you do not want to keep Python open all day, use Windows Task Scheduler:
 
-- Trigger: Daily at your report time
-- Action: Start a program
-- Program/script: path to `python.exe`
-- Add arguments: `e:\DEVELOPING\projects\report_bot\main.py`
-- Start in: `e:\DEVELOPING\projects\report_bot`
-- Enable: Run whether user is logged on or not
-- Enable: Wake the computer to run this task
+- **Trigger:** Daily at your report time
+- **Program:** path to your `python.exe`
+- **Arguments:** `e:\path\to\report_bot\main.py`
+- **Start in:** `e:\path\to\report_bot`
 
-Important: if the laptop or PC is fully powered off, Windows Task Scheduler cannot run the task. For sending reports while the computer is off, the bot must be hosted on an always-on machine such as a VPS, cloud server, or another computer that stays running.
+> Note: This works only when the computer is on. If you want the report to send even when the computer is off, host the bot on a VPS or cloud server.
 
-## Screenshot
+## Tech Stack
 
-Add a screenshot of the Telegram message here after you capture it.
+- Python 3.10+
+- `requests` — sends the Telegram API request
+- `python-dotenv` — loads values from `.env`
+- `schedule` — runs the Python loop scheduler
+- Telegram Bot API
+
+## Concepts Used
+
+- OOP and dataclasses
+- CSV file handling
+- Generator functions
+- Collections module (Counter)
+- Logging
+- Environment variables
+- Type hints
+- Error handling
+- Project structure and separation of concerns
+
+## Author
+
+Built by [be-harsh](https://github.com/be-harsh)

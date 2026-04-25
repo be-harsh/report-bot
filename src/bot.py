@@ -6,17 +6,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 def send_report(message: str) -> bool:
-    token = os.getenv("BOT_TOKEN")
-    chat_id = os.getenv("CHAT_ID")
+    """Send the report message to Telegram."""
+
+    token: str | None = os.getenv("BOT_TOKEN")
+    chat_id: str | None = os.getenv("CHAT_ID")
 
     if not token or not chat_id:
         logger.error("Missing BOT_TOKEN or CHAT_ID in environment")
         return False
 
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    url: str = f"https://api.telegram.org/bot{token}/sendMessage"
 
     try:
         response = requests.get(

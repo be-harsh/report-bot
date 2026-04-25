@@ -4,6 +4,8 @@ from datetime import date
 
 @dataclass
 class SaleRecord:
+    """Store one sales row from the CSV file."""
+
     sale_date: date
     product: str
     quantity: int
@@ -15,8 +17,10 @@ class SaleRecord:
 
 @dataclass
 class ReportSummary:
+    """Store the final numbers used in the daily report."""
+
     total_revenue: float
     total_orders: int
     top_product: str
     average_order_value: float
-    report_date: date
+    report_date: str

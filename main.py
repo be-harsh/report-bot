@@ -7,8 +7,8 @@ from src.scheduler import run_scheduler, send_daily_report
 
 load_dotenv()
 
-LOG_FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
-logger = logging.getLogger(__name__)
+LOG_FORMAT: str = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def configure_logging() -> None:
